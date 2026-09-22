@@ -16,8 +16,30 @@ document.addEventListener("DOMContentLoaded", () => {
   // Clock In/Out Event Handler
   const clockBtn = document.getElementById("btn-clock-toggle");
   if (clockBtn) {
-    clockBtn.addEventListener("click", () => {
-      store.toggleClock();
+    clockBtn.addEventListener("click", async () => {
+      const isClockingIn = !store.getState().attendance.clockedIn;
+
+      if (!isClockingIn) {
+        store.toggleClock();
+        return;
+      }
+
+      try {
+        const now = new Date();
+
+        await API.createAttendance({
+          employee_id: 1,
+          attendance_date: now.toISOString().slice(0, 10),
+          status: "Present",
+          check_in: now.toTimeString().slice(0, 5),
+        });
+
+        store.toggleClock();
+        alert("Clocked in successfully");
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
     });
   }
 

@@ -85,5 +85,39 @@ router.post("/hire", async (req, res) => {
     });
   }
 });
+router.patch("/:candidateId/stage", (req, res) => {
+  const { stage } = req.body;
+  const { candidateId } = req.params;
+
+  const allowedStages = ["Screening", "Interview", "Offer", "Hired"];
+
+  if (!allowedStages.includes(stage)) {
+    return res.status(400).json({
+      error: "Invalid recruitment stage",
+    });
+  }
+
+  const result = database
+    .prepare(
+      `
+      UPDATE candidates
+      SET stage = ?
+      WHERE id = ?
+    `,
+    )
+    .run(stage, candidateId);
+
+  if (result.changes === 0) {
+    return res.status(404).json({
+      error: "Candidate not found",
+    });
+  }
+
+  const candidate = database
+    .prepare("SELECT * FROM candidates WHERE id = ?")
+    .get(candidateId);
+
+  res.json(candidate);
+});
 
 module.exports = router;

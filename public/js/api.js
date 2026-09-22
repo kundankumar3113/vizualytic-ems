@@ -45,6 +45,7 @@ export const API = {
 
     return await res.json();
   },
+
   async getAttendance() {
     const res = await fetch(`${API_BASE}/attendance`);
 
@@ -65,6 +66,46 @@ export const API = {
     if (!res.ok) {
       const error = await res.json();
       throw new Error(error.error || "Unable to save attendance");
+    }
+
+    return await res.json();
+  },
+
+  async getCandidates() {
+    const res = await fetch(`${API_BASE}/recruitment`);
+
+    if (!res.ok) {
+      throw new Error("Unable to load candidates");
+    }
+
+    return await res.json();
+  },
+
+  async createCandidate(data) {
+    const res = await fetch(`${API_BASE}/recruitment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || "Unable to create candidate");
+    }
+
+    return await res.json();
+  },
+
+  async updateCandidateStage(candidateId, stage) {
+    const res = await fetch(`${API_BASE}/recruitment/${candidateId}/stage`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stage }),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || "Unable to update candidate stage");
     }
 
     return await res.json();
