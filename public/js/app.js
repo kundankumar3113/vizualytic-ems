@@ -2,46 +2,132 @@ import { store } from "./store.js";
 import { API } from "./api.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Vizualytic Data Solution EMS initialized.");
+  const user = store.getState().user;
+  const token = localStorage.getItem("auth_token");
 
-  // UI Navigation Tabs
-  const navTabs = document.querySelectorAll(".nav-tab");
-  navTabs.forEach((tab) => {
-    tab.addEventListener("click", (e) => {
-      const targetSection = e.currentTarget.dataset.target;
-      showSection(targetSection);
-    });
+  if (!user || !token) {
+    showAuthScreen();
+    setupAuthForms();
+    return;
+  }
+
+  showApplication(user);
+  setupApplication();
+});
+
+function showAuthScreen() {
+  document.getElementById("auth-screen")?.classList.remove("hidden");
+  document.getElementById("app-shell")?.classList.add("hidden");
+}
+
+function showApplication(user) {
+  document.getElementById("auth-screen")?.classList.add("hidden");
+  document.getElementById("app-shell")?.classList.remove("hidden");
+
+  const heading = document.querySelector(".topbar h2");
+
+  if (heading) {
+    heading.textContent = `Good morning, ${user.name}`;
+  }
+}
+
+function setupAuthForms() {
+  const loginForm = document.getElementById("login-form");
+  const registerForm = document.getElementById("register-form");
+  const authToggle = document.getElementById("auth-toggle");
+  const authTitle = document.getElementById("auth-title");
+
+  authToggle?.addEventListener("click", () => {
+    const isRegistering = registerForm.classList.toggle("hidden");
+
+    loginForm.classList.toggle("hidden", isRegistering);
+
+    authTitle.textContent = isRegistering ? "Create account" : "Login";
+
+    authToggle.textContent = isRegistering
+      ? "Already have an account?"
+      : "Create an account";
   });
 
-  // Clock In/Out Event Handler
-  const clockBtn = document.getElementById("btn-clock-toggle");
-  if (clockBtn) {
-    clockBtn.addEventListener("click", async () => {
-      const isClockingIn = !store.getState().attendance.clockedIn;
+  loginForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-      if (!isClockingIn) {
-        try {
-          const now = new Date();
+    const formData = new FormData(loginForm);
+    const loginData = Object.fromEntries(formData.entries());
+    const errorElement = document.getElementById("login-error");
 
-          await API.clockOut({
-            employee_id: 1,
-            attendance_date: now.toISOString().slice(0, 10),
-            check_out: now.toTimeString().slice(0, 5),
-          });
+    errorElement.textContent = "";
 
-          store.toggleClock();
-          window.dispatchEvent(new Event("attendance-updated"));
-          alert("Clocked out successfully");
-        } catch (error) {
-          console.error(error);
-          alert(error.message);
-        }
-        return;
+    try {
+      const result = await API.login(loginData);
+
+      localStorage.setItem("auth_token", result.token);
+      store.setUser(result.user);
+
+      window.location.reload();
+    } catch (error) {
+      errorElement.textContent = error.message;
+    }
+  });
+
+  registerForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(registerForm);
+    const registerData = Object.fromEntries(formData.entries());
+    const errorElement = document.getElementById("register-error");
+
+    errorElement.textContent = "";
+
+    try {
+      const result = await API.register(registerData);
+
+      localStorage.setItem("auth_token", result.token);
+      store.setUser(result.user);
+
+      window.location.reload();
+    } catch (error) {
+      errorElement.textContent = error.message;
+    }
+  });
+}
+
+function setupApplication() {
+  setupNavigation();
+  setupClockButton();
+  setupLogout();
+
+  store.subscribe((state) => {
+    updateClockUI(state.attendance);
+    renderEmployeeCount(state.employees.length);
+  });
+}
+
+function setupNavigation() {
+  const navTabs = document.querySelectorAll(".nav-tab");
+
+  navTabs.forEach((tab) => {
+    tab.addEventListener("click", (event) => {
+      const targetSection = event.currentTarget.dataset.target;
+
+      if (targetSection) {
+        showSection(targetSection);
       }
+    });
+  });
+}
 
-      try {
-        const now = new Date();
+function setupClockButton() {
+  const clockButton = document.getElementById("btn-clock-toggle");
 
+  if (!clockButton) return;
+
+  clockButton.addEventListener("click", async () => {
+    const isClockingIn = !store.getState().attendance.clockedIn;
+    const now = new Date();
+
+    try {
+      if (isClockingIn) {
         await API.createAttendance({
           employee_id: 1,
           attendance_date: now.toISOString().slice(0, 10),
@@ -51,47 +137,71 @@ document.addEventListener("DOMContentLoaded", () => {
 
         store.toggleClock();
         window.dispatchEvent(new Event("attendance-updated"));
-        alert("Clocked in successfully");
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-      }
-    });
-  }
 
-  // Subscribe UI Updates to State Changes
-  store.subscribe((state) => {
-    updateClockUI(state.attendance);
-    renderEmployeeCount(state.employees.length);
+        alert("Clocked in successfully");
+        return;
+      }
+
+      await API.clockOut({
+        employee_id: 1,
+        attendance_date: now.toISOString().slice(0, 10),
+        check_out: now.toTimeString().slice(0, 5),
+      });
+
+      store.toggleClock();
+      window.dispatchEvent(new Event("attendance-updated"));
+
+      alert("Clocked out successfully");
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
   });
-});
+}
+
+function setupLogout() {
+  const logoutButton = document.getElementById("btn-logout");
+
+  logoutButton?.addEventListener("click", () => {
+    store.logout();
+    window.location.reload();
+  });
+}
 
 function showSection(sectionId) {
-  document
-    .querySelectorAll("main > section")
-    .forEach((sec) => sec.classList.add("hidden"));
+  document.querySelectorAll("main > section").forEach((section) => {
+    section.classList.add("hidden");
+  });
+
   const activeSection = document.getElementById(sectionId);
-  if (activeSection) activeSection.classList.remove("hidden");
+
+  if (activeSection) {
+    activeSection.classList.remove("hidden");
+  }
+
   document.querySelectorAll(".nav-tab").forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.target === sectionId);
   });
 }
 
 function updateClockUI(attendance) {
-  const clockBtn = document.getElementById("btn-clock-toggle");
-  if (!clockBtn) return;
+  const clockButton = document.getElementById("btn-clock-toggle");
+
+  if (!clockButton) return;
+
   if (attendance.clockedIn) {
-    clockBtn.textContent = "Clock Out";
-    clockBtn.className =
-      "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700";
+    clockButton.textContent = "Clock Out";
+    clockButton.className = "clock-button clock-out-button";
   } else {
-    clockBtn.textContent = "Clock In";
-    clockBtn.className =
-      "px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700";
+    clockButton.textContent = "Clock In";
+    clockButton.className = "clock-button";
   }
 }
 
 function renderEmployeeCount(count) {
-  const el = document.getElementById("total-employee-count");
-  if (el) el.textContent = count;
+  const employeeCount = document.getElementById("total-employee-count");
+
+  if (employeeCount) {
+    employeeCount.textContent = count;
+  }
 }

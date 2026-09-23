@@ -1,27 +1,19 @@
 class Store {
   constructor() {
+    const savedUser = localStorage.getItem("auth_user");
+
     this.state = {
-      user: { name: "Admin", company: "Vizualytic Data Solution" },
-      employees: [
-        {
-          id: "VDS-1001",
-          name: "Ananya Roy",
-          role: "Lead Data Scientist",
-          dept: "Analytics",
-          salary: 125000,
-          status: "Active",
-        },
-        {
-          id: "VDS-1002",
-          name: "Rohan Verma",
-          role: "Full Stack Engineer",
-          dept: "Engineering",
-          salary: 95000,
-          status: "Active",
-        },
-      ],
-      attendance: { clockedIn: false, startTime: null, secondsWorked: 0 },
+      user: savedUser ? JSON.parse(savedUser) : null,
+
+      employees: [],
+
+      attendance: {
+        clockedIn: false,
+        startTime: null,
+        secondsWorked: 0,
+      },
     };
+
     this.listeners = [];
   }
 
@@ -29,25 +21,52 @@ class Store {
     return this.state;
   }
 
-  addEmployee(emp) {
-    this.state.employees.push(emp);
+  setUser(user) {
+    this.state.user = user;
+
+    localStorage.setItem("auth_user", JSON.stringify(user));
+
+    this.notify();
+  }
+
+  logout() {
+    this.state.user = null;
+
+    localStorage.removeItem("auth_user");
+    localStorage.removeItem("auth_token");
+
+    this.notify();
+  }
+
+  addEmployee(employee) {
+    this.state.employees.push(employee);
     this.notify();
   }
 
   toggleClock() {
     this.state.attendance.clockedIn = !this.state.attendance.clockedIn;
+
     this.state.attendance.startTime = this.state.attendance.clockedIn
       ? new Date()
       : null;
+
     this.notify();
   }
 
   subscribe(listener) {
     this.listeners.push(listener);
+
+    return () => {
+      this.listeners = this.listeners.filter(
+        (currentListener) => currentListener !== listener,
+      );
+    };
   }
 
   notify() {
-    this.listeners.forEach((fn) => fn(this.state));
+    this.listeners.forEach((listener) => {
+      listener(this.state);
+    });
   }
 }
 

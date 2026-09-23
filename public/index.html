@@ -1,107 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Vizualytic EMS</title>
-		<link rel="stylesheet" href="/css/styles.css" />
-	</head>
-	<body>
-		<div class="app-shell">
-			<aside class="sidebar">
-				<div class="brand-mark">V</div>
-				<div>
-					<p class="eyebrow">Vizualytic</p>
-					<h1>People Ops</h1>
-				</div>
-				<nav aria-label="Main navigation">
-					<button class="nav-tab active" data-target="dashboard">Overview</button>
-					<button class="nav-tab" data-target="employees">Employees</button>
-					<button class="nav-tab" data-target="attendance">Attendance</button>
-					<button class="nav-tab" data-target="payroll">Payroll</button>
-					<button class="nav-tab" data-target="recruitment">Recruitment</button>
-				</nav>
-				<div class="sidebar-footer">FY 2026 <span>●</span> All systems operational</div>
-			</aside>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vizualytic EMS</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
 
-			<main class="content">
-				<header class="topbar">
-					<div>
-						<p class="eyebrow">Monday, September 21, 2026</p>
-						<h2>Good morning, Admin</h2>
-					</div>
-					<button id="btn-clock-toggle" class="clock-button">Clock In</button>
-				</header>
+  <body>
+    <!-- Login and registration screen -->
+    <section id="auth-screen" class="auth-screen">
+      <div class="auth-panel">
+        <p class="eyebrow">Vizualytic EMS</p>
+        <h1 id="auth-title">Login</h1>
 
-				<section id="dashboard" class="page-section">
-					<div class="section-heading">
-						<div>
-							<p class="eyebrow">Company pulse</p>
-							<h3>Today at a glance</h3>
-						</div>
-						<span class="status-pill">Live workspace</span>
-					</div>
-					<div class="metric-grid">
-						<article class="metric-card accent-coral">
-							<span>Total employees</span>
-							<strong id="total-employee-count">2</strong>
-							<small>Across all departments</small>
-						</article>
-						<article class="metric-card accent-blue">
-							<span>Attendance today</span>
-							<strong>94%</strong>
-							<small>+6% from yesterday</small>
-						</article>
-						<article class="metric-card accent-gold">
-							<span>Open positions</span>
-							<strong>08</strong>
-							<small>3 interviews this week</small>
-						</article>
-					</div>
-					<div class="dashboard-grid">
-						<article class="panel welcome-panel">
-							<p class="eyebrow">Team snapshot</p>
-							<h3>Make work feel more human.</h3>
-							<p>Keep employee data, attendance, payroll, and hiring decisions in one calm workspace.</p>
-							<button class="primary-button nav-tab" data-target="employees">View employees</button>
-						</article>
-						<article class="panel activity-panel">
-							<div class="panel-title"><h3>Recent activity</h3><span>Today</span></div>
-							<ul class="activity-list">
-								<li><span class="activity-dot coral"></span><div><strong>Ananya Roy</strong><small>Updated payroll details</small></div><time>09:42</time></li>
-								<li><span class="activity-dot blue"></span><div><strong>Rohan Verma</strong><small>Clocked in for the day</small></div><time>09:08</time></li>
-								<li><span class="activity-dot gold"></span><div><strong>Recruitment</strong><small>New candidate moved to interview</small></div><time>08:35</time></li>
-							</ul>
-						</article>
-					</div>
-				</section>
+        <form id="login-form">
+          <label>
+            Email
+            <input name="email" type="email" required />
+          </label>
 
-				<section id="employees" class="page-section hidden">
-					<div class="section-heading"><div><p class="eyebrow">People directory</p><h3>Employees</h3></div><button id="btn-add-employee" class="primary-button">Add employee</button></div>
-					<div id="employees-content"></div>
-				</section>
-				<section id="attendance" class="page-section hidden">
-					<div class="section-heading"><div><p class="eyebrow">Time and leave</p><h3>Attendance</h3></div><span class="status-pill">Monday, Sep 21</span></div>
-					<div id="attendance-content"></div>
-				</section>
-				<section id="payroll" class="page-section hidden">
-					<div class="section-heading"><div><p class="eyebrow">Compensation</p><h3>Payroll</h3></div></div>
-					<div id="payroll-content"></div>
-				</section>
-				<section id="recruitment" class="page-section hidden">
-					<div class="section-heading">
-						<div><p class="eyebrow">Talent pipeline</p><h3>Recruitment</h3></div>
-						<button id="btn-add-candidate" class="primary-button">Add candidate</button>
-					</div>
-					<div id="recruitment-board" class="recruitment-board"></div>
-				</section>
-			</main>
-		</div>
-		<script type="module" src="/js/app.js"></script>
-		<script type="module" src="/js/components/dashboard.js"></script>
-		<script type="module" src="/js/components/employees.js"></script>
-		<script type="module" src="/js/components/attendance.js"></script>
-		<script type="module" src="/js/components/payroll.js"></script>
-		<script type="module" src="/js/components/recruitment.js"></script>
-	</body>
+          <label>
+            Password
+            <input name="password" type="password" required />
+          </label>
+
+          <button class="primary-button" type="submit">
+            Login
+          </button>
+
+          <p id="login-error" class="auth-error"></p>
+        </form>
+
+        <form id="register-form" class="hidden">
+          <label>
+            Name
+            <input name="name" type="text" required />
+          </label>
+
+          <label>
+            Email
+            <input name="email" type="email" required />
+          </label>
+
+          <label>
+            Password
+            <input name="password" type="password" minlength="8" required />
+          </label>
+
+          <button class="primary-button" type="submit">
+            Create account
+          </button>
+
+          <p id="register-error" class="auth-error"></p>
+        </form>
+
+        <button id="auth-toggle" class="text-button" type="button">
+          Create an account
+        </button>
+      </div>
+    </section>
+
+    <!-- Main application -->
+    <div id="app-shell" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand-mark">V</div>
+
+        <div>
+          <p class="eyebrow">Vizualytic</p>
+          <h1>People Ops</h1>
+        </div>
+
+        <nav aria-label="Main navigation">
+          <button class="nav-tab active" data-target="dashboard">
+            Overview
+          </button>
+
+          <button class="nav-tab" data-target="employees">
+            Employees
+          </button>
+
+          <button class="nav-tab" data-target="attendance">
+            Attendance
+          </button>
+
+          <button class="nav-tab" data-target="payroll">
+            Payroll
+          </button>
+
+          <button class="nav-tab" data-target="recruitment">
+            Recruitment
+          </button>
+        </nav>
+
+        <button id="btn-logout" class="primary-button sidebar-logout" type="button">
+          Logout
+        </button>
+
+        <div class="sidebar-footer">
+          FY 2026 <span>●</span> All systems operational
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Monday, September 21, 2026</p>
+            <h2>Good morning, Admin</h2>
+          </div>
+
+          <button id="btn-clock-toggle" class="clock-button" type="button">
+            Clock In
+          </button>
+        </header>
+
+        <section id="dashboard" class="page-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Company pulse</p>
+              <h3>Today at a glance</h3>
+            </div>
+
+            <span class="status-pill">Live workspace</span>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric-card accent-coral">
+              <span>Total employees</span>
+              <strong id="total-employee-count">0</strong>
+              <small>Across all departments</small>
+            </article>
+
+            <article class="metric-card accent-blue">
+              <span>Attendance today</span>
+              <strong>94%</strong>
+              <small>+6% from yesterday</small>
+            </article>
+
+            <article class="metric-card accent-gold">
+              <span>Open positions</span>
+              <strong>08</strong>
+              <small>3 interviews this week</small>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel welcome-panel">
+              <p class="eyebrow">Team snapshot</p>
+              <h3>Make work feel more human.</h3>
+
+              <p>
+                Keep employee data, attendance, payroll, and hiring decisions
+                in one calm workspace.
+              </p>
+
+              <button
+                class="primary-button nav-tab"
+                data-target="employees"
+                type="button"
+              >
+                View employees
+              </button>
+            </article>
+
+            <article class="panel activity-panel">
+              <div class="panel-title">
+                <h3>Recent activity</h3>
+                <span>Today</span>
+              </div>
+
+              <ul class="activity-list">
+                <li>
+                  <span class="activity-dot coral"></span>
+
+                  <div>
+                    <strong>Ananya Roy</strong>
+                    <small>Updated payroll details</small>
+                  </div>
+
+                  <time>09:42</time>
+                </li>
+
+                <li>
+                  <span class="activity-dot blue"></span>
+
+                  <div>
+                    <strong>Rohan Verma</strong>
+                    <small>Clocked in for the day</small>
+                  </div>
+
+                  <time>09:08</time>
+                </li>
+
+                <li>
+                  <span class="activity-dot gold"></span>
+
+                  <div>
+                    <strong>Recruitment</strong>
+                    <small>New candidate moved to interview</small>
+                  </div>
+
+                  <time>08:35</time>
+                </li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="employees" class="page-section hidden">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">People directory</p>
+              <h3>Employees</h3>
+            </div>
+
+            <button id="btn-add-employee" class="primary-button" type="button">
+              Add employee
+            </button>
+          </div>
+
+          <div id="employees-content"></div>
+        </section>
+
+        <section id="attendance" class="page-section hidden">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Time and leave</p>
+              <h3>Attendance</h3>
+            </div>
+
+            <span class="status-pill">Monday, Sep 21</span>
+          </div>
+
+          <div id="attendance-content"></div>
+        </section>
+
+        <section id="payroll" class="page-section hidden">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Compensation</p>
+              <h3>Payroll</h3>
+            </div>
+          </div>
+
+          <div id="payroll-content"></div>
+        </section>
+
+        <section id="recruitment" class="page-section hidden">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Talent pipeline</p>
+              <h3>Recruitment</h3>
+            </div>
+
+            <button id="btn-add-candidate" class="primary-button" type="button">
+              Add candidate
+            </button>
+          </div>
+
+          <div id="recruitment-board" class="recruitment-board"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/js/app.js"></script>
+    <script type="module" src="/js/components/dashboard.js"></script>
+    <script type="module" src="/js/components/employees.js"></script>
+    <script type="module" src="/js/components/attendance.js"></script>
+    <script type="module" src="/js/components/payroll.js"></script>
+    <script type="module" src="/js/components/recruitment.js"></script>
+  </body>
 </html>

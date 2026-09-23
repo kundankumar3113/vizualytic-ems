@@ -1,128 +1,104 @@
 const API_BASE = "/api";
 
+async function apiRequest(path, options = {}) {
+  const token = localStorage.getItem("auth_token");
+
+  const headers = {
+    "Content-Type": "application/json",
+    ...options.headers,
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Request failed");
+  }
+
+  return data;
+}
+
 export const API = {
-  async calculateSalary(data) {
-    const res = await fetch(`${API_BASE}/payroll/calculate`, {
+  async register(data) {
+    return apiRequest("/auth/register", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-
-    return await res.json();
   },
 
-  async hireCandidate(candidateData) {
-    const res = await fetch(`${API_BASE}/recruitment/hire`, {
+  async login(data) {
+    return apiRequest("/auth/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(candidateData),
+      body: JSON.stringify(data),
     });
-
-    return await res.json();
   },
 
   async getEmployees() {
-    const res = await fetch(`${API_BASE}/employees`);
-
-    if (!res.ok) {
-      throw new Error("Unable to load employees");
-    }
-
-    return await res.json();
+    return apiRequest("/employees");
   },
 
   async createEmployee(data) {
-    const res = await fetch(`${API_BASE}/employees`, {
+    return apiRequest("/employees", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Unable to create employee");
-    }
-
-    return await res.json();
   },
 
   async getAttendance() {
-    const res = await fetch(`${API_BASE}/attendance`);
-
-    if (!res.ok) {
-      throw new Error("Unable to load attendance");
-    }
-
-    return await res.json();
+    return apiRequest("/attendance");
   },
 
   async createAttendance(data) {
-    const res = await fetch(`${API_BASE}/attendance`, {
+    return apiRequest("/attendance", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Unable to save attendance");
-    }
-
-    return await res.json();
   },
 
   async clockOut(data) {
-    const res = await fetch(`${API_BASE}/attendance/clock-out`, {
+    return apiRequest("/attendance/clock-out", {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
+  },
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Unable to clock out");
-    }
-
-    return await res.json();
+  async calculateSalary(data) {
+    return apiRequest("/payroll/calculate", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
   },
 
   async getCandidates() {
-    const res = await fetch(`${API_BASE}/recruitment`);
-
-    if (!res.ok) {
-      throw new Error("Unable to load candidates");
-    }
-
-    return await res.json();
+    return apiRequest("/recruitment");
   },
 
   async createCandidate(data) {
-    const res = await fetch(`${API_BASE}/recruitment`, {
+    return apiRequest("/recruitment", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Unable to create candidate");
-    }
-
-    return await res.json();
   },
 
   async updateCandidateStage(candidateId, stage) {
-    const res = await fetch(`${API_BASE}/recruitment/${candidateId}/stage`, {
+    return apiRequest(`/recruitment/${candidateId}/stage`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ stage }),
     });
+  },
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Unable to update candidate stage");
-    }
-
-    return await res.json();
+  async hireCandidate(candidateData) {
+    return apiRequest("/recruitment/hire", {
+      method: "POST",
+      body: JSON.stringify(candidateData),
+    });
   },
 };

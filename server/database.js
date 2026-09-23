@@ -29,6 +29,16 @@ database.exec(`
     stage TEXT NOT NULL,
     email TEXT NOT NULL,
     department TEXT
+  ); 
+`);
+database.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'employee',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 `);
 
