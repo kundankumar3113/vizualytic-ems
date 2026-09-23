@@ -44,4 +44,34 @@ router.post("/", (req, res) => {
   });
 });
 
+router.patch("/clock-out", (req, res) => {
+  const { employee_id, attendance_date, check_out } = req.body;
+
+  if (!employee_id || !attendance_date || !check_out) {
+    return res.status(400).json({
+      error: "employee_id, attendance_date, and check_out are required",
+    });
+  }
+
+  const result = database
+    .prepare(
+      `
+      UPDATE attendance
+      SET check_out = ?
+      WHERE employee_id = ?
+        AND attendance_date = ?
+        AND check_out IS NULL
+    `,
+    )
+    .run(check_out, employee_id, attendance_date);
+
+  if (result.changes === 0) {
+    return res.status(404).json({
+      error: "No open attendance record found",
+    });
+  }
+
+  res.json({ success: true, check_out });
+});
+
 module.exports = router;

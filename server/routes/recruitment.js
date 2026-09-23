@@ -59,6 +59,16 @@ router.post("/hire", async (req, res) => {
     database
       .prepare(
         `
+        INSERT INTO employees
+        (name, email, role, department, status)
+        VALUES (?, ?, ?, ?, 'Active')
+      `,
+      )
+      .run(name, email, role, department || null);
+
+    database
+      .prepare(
+        `
         UPDATE candidates
         SET stage = 'Hired'
         WHERE id = ?

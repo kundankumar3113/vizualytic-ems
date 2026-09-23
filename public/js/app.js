@@ -20,7 +20,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const isClockingIn = !store.getState().attendance.clockedIn;
 
       if (!isClockingIn) {
-        store.toggleClock();
+        try {
+          const now = new Date();
+
+          await API.clockOut({
+            employee_id: 1,
+            attendance_date: now.toISOString().slice(0, 10),
+            check_out: now.toTimeString().slice(0, 5),
+          });
+
+          store.toggleClock();
+          window.dispatchEvent(new Event("attendance-updated"));
+          alert("Clocked out successfully");
+        } catch (error) {
+          console.error(error);
+          alert(error.message);
+        }
         return;
       }
 
@@ -35,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         store.toggleClock();
+        window.dispatchEvent(new Event("attendance-updated"));
         alert("Clocked in successfully");
       } catch (error) {
         console.error(error);

@@ -71,6 +71,21 @@ export const API = {
     return await res.json();
   },
 
+  async clockOut(data) {
+    const res = await fetch(`${API_BASE}/attendance/clock-out`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || "Unable to clock out");
+    }
+
+    return await res.json();
+  },
+
   async getCandidates() {
     const res = await fetch(`${API_BASE}/recruitment`);
 

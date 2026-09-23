@@ -2,6 +2,7 @@ import { API } from "../api.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   loadAttendance();
+  window.addEventListener("attendance-updated", loadAttendance);
 });
 
 async function loadAttendance() {
