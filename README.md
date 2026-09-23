@@ -1,27 +1,55 @@
 # Vizualytic EMS
 
-A simple employee management system built with Node.js and Express.
+Vizualytic EMS is a lightweight employee management system built with Node.js and Express. It helps manage employee records, attendance, payroll, and recruitment workflows in a simple web-based interface.
 
-## Setup
+## Features
 
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Copy the example environment file:
-   ```bash
-   copy .env.example .env
-   ```
-4. Update the values in `.env` with your real configuration.
-5. Start the app:
-   ```bash
-   npm start
-   ```
+- Employee management
+- Attendance tracking
+- Payroll processing
+- Recruitment management
+- Simple web dashboard interface
 
-## Environment variables
+## Getting Started
 
-The project expects the following variables in `.env`:
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/kundankumar3113/vizualytic-ems.git
+cd vizualytic-ems
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create your local environment file from the example:
+
+```bash
+copy .env.example .env
+```
+
+Then update the values in `.env` with your own configuration.
+
+### 4. Run the application
+
+```bash
+npm start
+```
+
+For development mode:
+
+```bash
+npm run dev
+```
+
+## Environment Variables
+
+The application uses the following variables in `.env`:
 
 - `PORT`
 - `DB_PATH`
@@ -33,5 +61,18 @@ The project expects the following variables in `.env`:
 
 ## Scripts
 
-- `npm start` - run the server
-- `npm run dev` - run with nodemon
+- `npm start` — start the server
+- `npm run dev` — start the server with nodemon for live reload
+
+## Project Structure
+
+```text
+vizualytic-ems/
+├── public/
+├── server/
+├── .env.example
+├── .gitignore
+├── package.json
+├── README.md
+└── server.js
+```
