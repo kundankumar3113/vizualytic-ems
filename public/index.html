@@ -222,6 +222,16 @@
           <div id="employees-content"></div>
         </section>
 
+        <section id="employee-details" class="page-section hidden">
+          <div class="detail-toolbar">
+            <button id="btn-back-employees" class="back-button" type="button">
+              <span aria-hidden="true">&#8592;</span> Back to employees
+            </button>
+          </div>
+
+          <div id="employee-details-content"></div>
+        </section>
+
         <section id="attendance" class="page-section hidden">
           <div class="section-heading">
             <div>
@@ -259,6 +269,61 @@
           </div>
 
           <div id="recruitment-board" class="recruitment-board"></div>
+        </section>
+
+        <section id="candidate-details" class="page-section hidden">
+          <div class="detail-toolbar">
+            <button id="btn-back-recruitment" class="back-button" type="button">
+              <span aria-hidden="true">&#8592;</span> Back to recruitment
+            </button>
+          </div>
+
+          <div id="candidate-details-content"></div>
+        </section>
+
+        <section id="candidate-create" class="page-section hidden">
+          <div class="detail-toolbar">
+            <button id="btn-back-create-candidate" class="back-button" type="button">
+              <span aria-hidden="true">&#8592;</span> Back to recruitment
+            </button>
+          </div>
+
+          <div class="form-page-heading">
+            <div>
+              <p class="eyebrow">Talent pipeline</p>
+              <h2>Add a candidate</h2>
+              <p>Capture the candidate profile once and keep every hiring detail in one place.</p>
+            </div>
+            <span class="stage-badge">New profile</span>
+          </div>
+
+          <form id="candidate-form" class="panel candidate-form">
+            <div class="form-section-heading">
+              <p class="eyebrow">Profile information</p>
+              <h3>Candidate details</h3>
+            </div>
+
+            <div class="form-field-grid">
+              <label>Full name <input name="name" type="text" placeholder="e.g. Aditi Sharma" required /></label>
+              <label>Email address <input name="email" type="email" placeholder="candidate@example.com" required /></label>
+              <label>Role <input name="role" type="text" placeholder="e.g. Product Designer" required /></label>
+              <label>Department <input name="department" type="text" placeholder="e.g. Design" /></label>
+              <label>Pipeline stage
+                <select name="stage">
+                  <option value="Screening">Screening</option>
+                  <option value="Interview">Interview</option>
+                  <option value="Offer">Offer</option>
+                  <option value="Hired">Hired</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="candidate-form-actions">
+              <p id="candidate-form-error" class="auth-error"></p>
+              <button id="btn-cancel-candidate" class="secondary-button" type="button">Cancel</button>
+              <button class="primary-button" type="submit">Save candidate</button>
+            </div>
+          </form>
         </section>
       </main>
     </div>

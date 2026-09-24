@@ -42,4 +42,22 @@ database.exec(`
   );
 `);
 
+const employeeColumns = [
+  ["salary", "REAL"],
+  ["date_of_joining", "TEXT"],
+  ["phone", "TEXT"],
+  ["address", "TEXT"],
+];
+
+for (const [column, type] of employeeColumns) {
+  const existingColumn = database
+    .prepare("PRAGMA table_info(employees)")
+    .all()
+    .some((item) => item.name === column);
+
+  if (!existingColumn) {
+    database.exec(`ALTER TABLE employees ADD COLUMN ${column} ${type}`);
+  }
+}
+
 module.exports = database;
